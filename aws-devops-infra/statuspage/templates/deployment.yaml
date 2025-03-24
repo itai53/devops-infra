@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.nameOverride | default "statuspage" }}
+  namespace: {{ .Values.namespace | default "default" }}
+  labels:
+    app: {{ .Values.appLabel | default "statuspage" }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appLabel | default "statuspage" }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appLabel | default "statuspage" }}
+    spec:
+      containers:
+        - name: {{ .Values.containerName | default "statuspage" }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}
+          ports:
+            - containerPort: {{ .Values.containerPort | default 8000 }}
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.databaseSecret.name | default "statuspage-credentials" }}
+                  key: {{ .Values.databaseSecret.key | default "username" }}

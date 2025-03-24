@@ -1,0 +1,71 @@
+# deployment
+replicaCount: 1
+namespace: default
+nameOverride: statuspage
+appLabel: statuspage
+containerName: statuspage
+image:
+  repository: ${image_repository}
+  tag: latest
+containerPort: 8000
+databaseSecret:
+  name: statuspage-credentials
+  key: username
+
+# externalsecret
+externalsecret:
+  enabled: true       
+  name: statuspage-db-secret
+  namespace: default
+  refreshInterval: 1h
+  secretStore:
+    name: aws-secret-store
+    kind: SecretStore
+  target:
+    name: statuspage-db-credentials
+    creationPolicy: Owner
+  remoteSecret:
+    secretName: statuspage-credentials
+    keys:
+      - name: username
+        property: username
+      - name: password
+        property: password
+
+# ingress
+ingress:
+  enabled: true
+  name: statuspage-ingress
+  namespace: default
+  scheme: internet-facing
+  targetType: ip
+  listenPorts: '[{"HTTP":80}]'
+  loadBalancerName: my-statuspage-alb
+  externalDnsHostname: app.imlinfo.xyz
+  className: alb
+  host: app.imlinfo.xyz
+  serviceName: statuspage-service
+  servicePort: 80
+
+# secretStore
+secretStore:
+  name: aws-secret-store
+  namespace: default
+  awsRegion: us-east-1
+  serviceAccountName: external-secrets-sa
+
+# service
+service:
+  name: statuspage-service
+  namespace: default
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+  protocol: TCP
+  selectorLabel: statuspage
+
+# serviceAccount
+serviceAccount:
+  name: external-secrets-sa
+  namespace: default
+  roleArn: arn:aws:iam::<YOUR_ACCOUNT_ID>:role/eso-secretsmanager-role  # ← Replace this value with a `.Values`-friendly dynamic value if needed  

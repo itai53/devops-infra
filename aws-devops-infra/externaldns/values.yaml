@@ -1,0 +1,16 @@
+domainFilters:
+  - imlinfo.xyz
+
+provider: aws
+policy: upsert-only
+registry: txt
+txtOwnerId: statuspage
+
+serviceAccount:
+  create: true
+  name: external-dns
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::992382545251:role/external-dns-irsa-role
+
+sources:
+  - ingress

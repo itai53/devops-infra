@@ -1,0 +1,28 @@
+replicaCount: 1
+service:
+  type: ClusterIP
+  port: 9090
+
+grafana:
+  enabled: false
+
+prometheus:
+  enabled: true
+  ingress:
+    enabled: true
+    hosts:
+      - prometheus.imlinfo.xyz
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+    ingressClassName: alb
+  prometheusSpec:
+    remoteWrite:
+      - url: https://prometheus-prod-24-prod-eu-west-2.grafana.net/api/prom/push
+        basicAuth:
+          username:
+            name: prometheus-remote-write-secret
+            key: username
+          password:
+            name: prometheus-remote-write-secret
+            key: password
