@@ -6,7 +6,7 @@ appLabel: statuspage
 containerName: statuspage
 image:
   repository: 992382545251.dkr.ecr.us-east-1.amazonaws.com/statuspageitai-ecr
-  tag: v25
+  tag: latest
   pullPolicy: Always
 containerPort: 8000
 databaseSecret:
