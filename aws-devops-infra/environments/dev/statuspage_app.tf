@@ -4,7 +4,7 @@
 resource "helm_release" "statuspage_app" {
   name             = "statuspage"
   chart            = "${path.module}/../../statuspage"
-  namespace        = "default"
+  namespace        = "statuspage"
   create_namespace = true
   set {
     name  = "image.repository"
@@ -20,7 +20,7 @@ resource "helm_release" "statuspage_app" {
   }
   set {
     name  = "ingress.namespace"
-    value = "default"
+    value = "statuspage"
   }
   set {
     name  = "ingress.scheme"

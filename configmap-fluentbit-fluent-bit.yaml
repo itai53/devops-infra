@@ -1,0 +1,85 @@
+apiVersion: v1
+data:
+  custom_parsers.conf: |
+    [PARSER]
+        Name docker_no_time
+        Format json
+        Time_Keep Off
+        Time_Key time
+        Time_Format %Y-%m-%dT%H:%M:%S.%L
+  fluent-bit.conf: |
+    [SERVICE]
+        Daemon Off
+        Flush 1
+        Log_Level info
+        Parsers_File /fluent-bit/etc/parsers.conf
+        Parsers_File /fluent-bit/etc/conf/custom_parsers.conf
+        HTTP_Server On
+        HTTP_Listen 0.0.0.0
+        HTTP_Port 2020
+        Health_Check On
+
+    [INPUT]
+        Name tail
+        Path /var/log/containers/*.log
+        multiline.parser docker, cri
+        Tag kube.*
+        Mem_Buf_Limit 5MB
+        Skip_Long_Lines On
+
+    [INPUT]
+        Name systemd
+        Tag host.*
+        Systemd_Filter _SYSTEMD_UNIT=kubelet.service
+        Read_From_Tail On
+
+    [FILTER]
+        Name kubernetes
+        Match kube.*
+        Merge_Log On
+        Keep_Log Off
+        K8S-Logging.Parser On
+        K8S-Logging.Exclude On
+
+    [OUTPUT]
+      Name es
+      Match kube.*
+      Host search-status-page-secrets-ei-wlyuj5tryf3rbhx3ukbjukwcti.us-east-1.es.amazonaws.com
+      Port 443
+      TLS On
+      Index fluentbit
+      Logstash_Format On
+      Retry_Limit False
+      HTTP_User ELADitai2025
+      HTTP_Passwd ELADitai@2025
+
+    [OUTPUT]
+      Name es
+      Match host.*
+      Host search-status-page-secrets-ei-wlyuj5tryf3rbhx3ukbjukwcti.us-east-1.es.amazonaws.com
+      Port 443
+      TLS On
+    Index fluentbit
+    Logstash_Format On
+      Logstash_Prefix node
+    Retry_Limit False
+      HTTP_User ELADitai2025
+      HTTP_Passwd ELADitai@2025
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"custom_parsers.conf":"[PARSER]\n    Name docker_no_time\n    Format json\n    Time_Keep Off\n    Time_Key time\n    Time_Format %Y-%m-%dT%H:%M:%S.%L\n","fluent-bit.conf":"[SERVICE]\n    Daemon Off\n    Flush 1\n    Log_Level info\n    Parsers_File /fluent-bit/etc/parsers.conf\n    Parsers_File /fluent-bit/etc/conf/custom_parsers.conf\n    HTTP_Server On\n    HTTP_Listen 0.0.0.0\n    HTTP_Port 2020\n    Health_Check On\n\n[INPUT]\n    Name tail\n    Path /var/log/containers/*.log\n    multiline.parser docker, cri\n    Tag kube.*\n    Mem_Buf_Limit 5MB\n    Skip_Long_Lines On\n\n[INPUT]\n    Name systemd\n    Tag host.*\n    Systemd_Filter _SYSTEMD_UNIT=kubelet.service\n    Read_From_Tail On\n\n[FILTER]\n    Name kubernetes\n    Match kube.*\n    Merge_Log On\n    Keep_Log Off\n    K8S-Logging.Parser On\n    K8S-Logging.Exclude On\n\n[OUTPUT]\n    Name es\n  Match kube.*\n  Host search-status-page-secrets-ei-wlyuj5tryf3rbhx3ukbjukwcti.us-east-1.es.amazonaws.com\n  Port 443\n  TLS On\n  Index fluentbit\n  Logstash_Format On\n  Retry_Limit False\n  HTTP_User ELADitai2025\n  HTTP_Passwd ELADitai@2025\n\n[OUTPUT]\n    Name es\n  Match host.*\n  Host search-status-page-secrets-ei-wlyuj5tryf3rbhx3ukbjukwcti.us-east-1.es.amazonaws.com\n  Port 443\n  TLS On\nIndex fluentbit\nLogstash_Format On\n  Logstash_Prefix node\nRetry_Limit False\n  HTTP_User ELADitai2025\n  HTTP_Passwd ELADitai@2025\n"},"kind":"ConfigMap","metadata":{"annotations":{"meta.helm.sh/release-name":"fluentbit","meta.helm.sh/release-namespace":"logging"},"creationTimestamp":"2025-03-25T08:44:22Z","labels":{"app.kubernetes.io/instance":"fluentbit","app.kubernetes.io/managed-by":"Helm","app.kubernetes.io/name":"fluent-bit","app.kubernetes.io/version":"3.0.3","helm.sh/chart":"fluent-bit-0.46.3"},"name":"fluentbit-fluent-bit","namespace":"logging","resourceVersion":"604582","uid":"c1df624b-d317-4f94-8d5d-de385de017b5"}}
+    meta.helm.sh/release-name: fluentbit
+    meta.helm.sh/release-namespace: logging
+  creationTimestamp: "2025-03-25T08:44:22Z"
+  labels:
+    app.kubernetes.io/instance: fluentbit
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: fluent-bit
+    app.kubernetes.io/version: 3.0.3
+    helm.sh/chart: fluent-bit-0.46.3
+  name: fluentbit-fluent-bit
+  namespace: logging
+  resourceVersion: "606735"
+  uid: c1df624b-d317-4f94-8d5d-de385de017b5

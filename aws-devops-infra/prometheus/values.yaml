@@ -1,7 +1,12 @@
 replicaCount: 1
+
 service:
   type: ClusterIP
   port: 9090
+
+serviceAccount:
+  name: external-secrets-sa
+  create: false
 
 grafana:
   enabled: false
@@ -16,6 +21,7 @@ prometheus:
       alb.ingress.kubernetes.io/scheme: internet-facing
       alb.ingress.kubernetes.io/target-type: ip
     ingressClassName: alb
+  prometheus:
   prometheusSpec:
     remoteWrite:
       - url: https://prometheus-prod-24-prod-eu-west-2.grafana.net/api/prom/push
@@ -26,3 +32,20 @@ prometheus:
           password:
             name: prometheus-remote-write-secret
             key: password
+        writeRelabelConfigs:
+          # ✅ Keep only "statuspage" namespace (your app)
+          - sourceLabels: [namespace]
+            regex: "statuspage"
+            action: keep
+
+          # 🔥 Drop everything else
+          - action: drop
+serviceMonitor:
+  enabled: true
+  namespace: statuspage
+  selector:
+    matchLabels:
+      app: statuspage
+  endpoints:
+    - port: http
+      path: /metrics

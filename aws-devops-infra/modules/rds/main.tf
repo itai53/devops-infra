@@ -14,7 +14,7 @@ resource "aws_security_group" "this" {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/16"] # Adjust based on VPC CIDR or EKS SG
+    cidr_blocks = ["10.0.0.0/16"] 
   }
 
   egress {

@@ -20,9 +20,6 @@ spec:
           image: {{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}
           ports:
             - containerPort: {{ .Values.containerPort | default 8000 }}
-          env:
-            - name: DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.databaseSecret.name | default "statuspage-credentials" }}
-                  key: {{ .Values.databaseSecret.key | default "username" }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.databaseSecret.name | default "statuspage-credentials" }}

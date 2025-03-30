@@ -2,8 +2,10 @@
 # ALB Controller Setup (IRSA, SA, Helm)
 # ─────────────────────────────────────────────
 module "alb_irsa" {
-  source       = "../../modules/alb_irsa"
-  cluster_name = var.cluster_name
+  source               = "../../modules/alb_irsa"
+  cluster_name         = var.cluster_name
+  oidc_provider_arn    = module.eks.oidc_provider_arn
+  oidc_provider_url    = module.eks.cluster_oidc_issuer_url
 }
 resource "kubernetes_service_account" "alb_controller" {
   metadata {

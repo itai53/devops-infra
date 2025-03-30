@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Release.Name }}-statuspage-monitor
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.serviceMonitor.selector.matchLabels.app }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Values.serviceMonitor.namespace }}
+  endpoints:
+    - port: {{ .Values.serviceMonitor.endpoints[0].port }}
+      path: {{ .Values.serviceMonitor.endpoints[0].path }}

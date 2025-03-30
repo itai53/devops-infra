@@ -29,11 +29,6 @@ output "nat_gateway_ids" {
 }
 
 #RDS
-output "rds_endpoint" {
-  description = "PostgreSQL RDS endpoint"
-  value       = module.rds_postgres.db_instance_endpoint
-}
-
 output "rds_username" {
   value = module.rds_postgres.db_instance_username
 }
@@ -41,12 +36,11 @@ output "rds_username" {
 output "rds_db_name" {
   value = module.rds_postgres.db_instance_name
 }
-
-#Redis
-output "redis_endpoint" {
-  description = "Redis cluster endpoint"
-  value       = module.redis_registry.cluster_address
+output "rds_endpoint" {
+  description = "The endpoint of the RDS PostgreSQL instance"
+  value       = module.rds_postgres.db_instance_endpoint
 }
+#Redis
 
 # output "redis_subnet_group" {
 #   description = "Subnet group name for Redis"
@@ -96,4 +90,12 @@ output "oidc_provider_arn" {
 }
 output "oidc_provider_url" {
   value = module.eks.cluster_oidc_issuer_url
+}
+output "redis_endpoint" {
+  description = "Redis primary endpoint"
+  value       = module.redis_registry.replication_group_primary_endpoint_address
+}
+output "redis_port" {
+  description = "Redis port (default 6379)"
+  value       = 6379
 }

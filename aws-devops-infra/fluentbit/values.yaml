@@ -1,4 +1,18 @@
+disableBuiltinOutput: true
+
 replicaCount: 1
+
 service:
   type: ClusterIP
   port: 2020
+
+extraVolumeMounts:
+  - name: custom-config
+    mountPath: /fluent-bit/etc/fluent-bit.conf
+    subPath: fluent-bit.conf
+    readOnly: true
+
+extraVolumes:
+  - name: custom-config
+    configMap:
+      name: fluentbit-custom-config

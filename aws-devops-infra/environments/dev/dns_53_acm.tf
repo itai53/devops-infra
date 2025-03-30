@@ -15,3 +15,10 @@ module "acm" {
   zone_id     = module.route53.zone_id
   tags        = var.default_tags
 }
+resource "aws_route53_record" "opensearch_logs" {
+  zone_id = module.route53.zone_id
+  name    = "logs"
+  type    = "CNAME"
+  ttl     = 300
+  records = [module.opensearch.domain_endpoint] 
+}

@@ -1,9 +1,28 @@
-variable "role_name" {}
-variable "policy_json" {}
-variable "oidc_provider_arn" {}
-variable "oidc_provider_url" {}
-variable "namespace" {}
-variable "service_account_name" {}
+variable "role_name" {
+  type = string
+}
+
+variable "service_account_name" {
+  type = string
+}
+
+variable "namespace" {
+  type = string
+}
+
+variable "oidc_provider_arn" {
+  type = string
+}
+
+variable "oidc_provider_url" {
+  type = string
+}
+
 variable "tags" {
   type = map(string)
 }
+
+variable "policy_json" {
+  type = string
+}
+

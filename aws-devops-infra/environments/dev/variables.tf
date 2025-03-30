@@ -76,6 +76,10 @@ variable "rds_username" {
   type    = string
   default = "postgres"
 }
+variable "rds_endpoint" {
+  type    = string
+  default = "url of postgres"
+}
 
 variable "rds_db_password" {
   description = "Password for RDS PostgreSQL"

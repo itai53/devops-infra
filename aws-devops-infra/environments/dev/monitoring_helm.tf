@@ -58,28 +58,9 @@ resource "helm_release" "fluentbit" {
   version          = "0.46.3"
   namespace        = "logging"
   create_namespace = true
-
   values = [
     file("${path.module}/../../fluentbit/values.yaml")
   ]
-# Dynamically inject OpenSearch output config
-set {
-  name  = "extraOutputPlugin"
-  value = <<EOT
-[OUTPUT]
-    Name  es
-    Match *
-    Host  ${module.opensearch.domain_endpoint}
-    Port  443
-    Index fluentbit
-    Type  _doc
-    Logstash_Format On
-    Retry_Limit False
-    tls On
-    HTTP_User admin
-    HTTP_Passwd ${var.opensearch_admin_password}
-EOT
-}
 depends_on = [
   module.eks,
   null_resource.update_kubeconfig

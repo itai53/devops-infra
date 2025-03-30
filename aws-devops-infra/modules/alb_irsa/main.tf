@@ -6,11 +6,19 @@ resource "aws_iam_policy" "alb_controller" {
 
 data "aws_iam_policy_document" "alb_controller_assume_role" {
   statement {
-    actions = ["sts:AssumeRole"]
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+
+    effect = "Allow"
 
     principals {
-      type        = "Service"
-      identifiers = ["eks.amazonaws.com"]
+      type        = "Federated"
+      identifiers = [var.oidc_provider_arn]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(var.oidc_provider_url, "https://", "")}:sub"
+      values   = ["system:serviceaccount:kube-system:aws-load-balancer-controller"]
     }
   }
 }
